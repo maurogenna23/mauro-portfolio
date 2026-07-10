@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mauro-portfolio-iota.vercel.app/sitemap-index.xml
+Sitemap: https://maurogenna.dev/sitemap-index.xml

@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // `site` powers canonical URLs, sitemap.xml, and absolute OG/Twitter image
 // URLs. Update this if a custom domain replaces the Vercel one.
 export default defineConfig({
-  site: 'https://mauro-portfolio-iota.vercel.app',
+  site: 'https://maurogenna.dev',
   integrations: [sitemap()],
   build: {
     inlineStylesheets: 'auto',
