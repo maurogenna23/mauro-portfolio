@@ -1,0 +1,148 @@
+/* ============================================================
+   Mauro Genna — Portfolio
+   Global styles ported 1:1 from the Claude Design handoff.
+   Keyframes, base resets, attribute-driven interactions and the
+   media queries all come straight from the prototype's <style>.
+   `style-hover` inline attributes were converted to real CSS
+   classes (see the .hover-* rules at the bottom).
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #080a0f; }
+::selection { background: rgba(77, 155, 255, .28); color: #fff; }
+a { color: #4d9bff; text-decoration: none; }
+a:hover { color: #8fc0ff; }
+
+@keyframes nodeDot { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@keyframes nodeRing {
+  0% { opacity: .55; transform: scale(.6); }
+  70% { opacity: 0; transform: scale(2.6); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+@keyframes flow { to { stroke-dashoffset: -160; } }
+@keyframes statusBlink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@keyframes bootCaret { 50% { opacity: 0; } }
+
+@media (pointer: fine) {
+  [data-portfolio-root][data-cursor-on],
+  [data-portfolio-root][data-cursor-on] * { cursor: none !important; }
+}
+
+[data-grain] {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='150'%20height='150'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html[data-boot-skip] [data-boot] { display: none !important; }
+
+[data-arch-box] {
+  transition: border-color .22s ease, background-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+[data-arch-box]:hover {
+  border-color: var(--accent) !important;
+  background: color-mix(in oklab, var(--accent) 13%, var(--panel-2)) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 44px -24px rgba(0, 0, 0, .7);
+  position: relative;
+  z-index: 2;
+}
+[data-arch-link] { transition: opacity .22s ease, transform .22s ease; }
+[data-arch]:hover [data-arch-link] { transform: scale(1.12); }
+[data-layer]:hover [data-layer-num] { color: var(--accent); }
+
+@media (max-width: 720px) {
+  [data-hdr-role] { display: none; }
+  [data-nav-lbl] { display: none !important; }
+}
+@media (max-width: 520px) {
+  [data-kbd-hint] { display: none; }
+}
+@media (max-width: 640px) {
+  [data-tb-cell] {
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+}
+
+/* ---- style-hover conversions (were inline in the prototype) ---- */
+.hover-nav:hover { color: var(--ink); }
+.hover-search:hover { border-color: var(--accent); color: var(--ink); }
+.hover-primary:hover { filter: brightness(1.08); }
+.hover-ghost:hover { border-color: var(--accent); color: var(--ink); }
+.hover-chip:hover { border-color: var(--accent); color: var(--ink); }
+.hover-layer:hover {
+  background: color-mix(in oklab, var(--accent) 5%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.hover-copy:hover { background: color-mix(in oklab, var(--accent) 20%, var(--bg-soft)); }
+.hover-cv:hover { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--ink); }
+.hover-social:hover { border-color: var(--line-2); color: var(--ink); }
+
+/* Arnie screenshot slot — graceful placeholder until the asset is dropped in. */
+.arnie-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* `contain` shows the screenshot at full width so the landing's edge-to-edge
+     header (logo on the left, EN / Iniciar sesión on the right) is never
+     clipped. Anchored to the top; the small remainder below blends into the
+     dark panel behind it. */
+  object-fit: contain;
+  object-position: top center;
+  display: block;
+}
+.arnie-shot-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .05em;
+  color: var(--faint);
+  background:
+    radial-gradient(120% 120% at 30% 0%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%),
+    var(--bg-soft);
+}
+
+/* ---- Case-study Problem/Decision/Result grid — no orphan cells ----
+   auto-fit left a blank 4th cell at tablet widths; fixed tracks avoid it:
+   3 equal columns on desktop, stacked on mobile. */
+.pdr-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+}
+@media (min-width: 760px) {
+  .pdr-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---- Aggregate-impact stats — no orphan cells ----
+   4 across on desktop, 2×2 on tablet, stacked on mobile. */
+.impact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+}
+@media (min-width: 560px) {
+  .impact-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .impact-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---- Header ---- */
+.hdr-name { white-space: nowrap; }
+/* On phones the centered numbered nav crowds the wordmark; the ⌘K search
+   button already covers navigation, so drop the pill and keep a clean brand. */
+@media (max-width: 600px) {
+  .hdr-nav { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+  html { scroll-behavior: auto; }
+}

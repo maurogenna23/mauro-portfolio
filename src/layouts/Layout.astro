@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = 'Mauro Genna — Full-Stack Engineer & Founder',
+  description = 'Full-Stack Engineer shipping AI-powered SaaS products from MVP to revenue. Founder of Arnie. TypeScript, NestJS, Next.js, PostgreSQL, OpenAI & voice AI for US and EU markets.',
+  image = '/og-mauro-genna.png',
+} = Astro.props;
+
+// Absolute URLs (require `site` in astro.config.mjs).
+const site = Astro.site ?? new URL('https://www.maurogenna.com');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mauro Genna',
+  jobTitle: 'Full-Stack Engineer',
+  description:
+    'Full-Stack Engineer and founder building AI-powered SaaS products end-to-end — backend to frontend — with ownership over architecture, scalability and revenue-critical features.',
+  url: site.href,
+  image: ogImage,
+  email: 'mailto:gennamauro18@gmail.com',
+  sameAs: [
+    'https://github.com/maurogenna23',
+    'https://www.linkedin.com/in/maurogenna',
+  ],
+  knowsLanguage: ['English', 'Spanish', 'Italian'],
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Arnie',
+    url: 'https://www.arniechat.com',
+  },
+  knowsAbout: [
+    'TypeScript',
+    'NestJS',
+    'Node.js',
+    'Next.js',
+    'React',
+    'PostgreSQL',
+    'MongoDB',
+    'OpenAI',
+    'Retell AI',
+    'Voice AI',
+    'SaaS',
+    'Billing systems',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Mauro Genna" />
+    <meta name="theme-color" content="#080a0f" />
+    <meta
+      name="keywords"
+      content="Mauro Genna, full-stack engineer, founding engineer, AI SaaS, TypeScript, NestJS, Next.js, PostgreSQL, OpenAI, voice AI, Arnie"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Mauro Genna" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Mauro Genna — Full-Stack Engineer & Founder" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Mauro" />
+    <meta property="profile:last_name" content="Genna" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Arnie screenshot CDN (Cloudflare R2) -->
+    <link rel="preconnect" href="https://pub-609eaf8a36ee462496af57602c6a54ed.r2.dev" crossorigin />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Skip the boot animation on repeat visits within the same session. -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem('mg-boot') === '1')
+          document.documentElement.setAttribute('data-boot-skip', '');
+      } catch (e) {}
+    </script>
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(personSchema)}
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
