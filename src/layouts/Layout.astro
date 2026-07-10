@@ -14,7 +14,7 @@ const {
 } = Astro.props;
 
 // Absolute URLs (require `site` in astro.config.mjs).
-const site = Astro.site ?? new URL('https://www.maurogenna.com');
+const site = Astro.site ?? new URL('https://mauro-portfolio-iota.vercel.app');
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(image, site).href;
 

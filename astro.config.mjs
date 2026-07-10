@@ -2,10 +2,10 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// IMPORTANT: change `site` to your real deployed domain before shipping.
-// It powers canonical URLs, sitemap.xml, and absolute OG/Twitter image URLs.
+// `site` powers canonical URLs, sitemap.xml, and absolute OG/Twitter image
+// URLs. Update this if a custom domain replaces the Vercel one.
 export default defineConfig({
-  site: 'https://www.maurogenna.com',
+  site: 'https://mauro-portfolio-iota.vercel.app',
   integrations: [sitemap()],
   build: {
     inlineStylesheets: 'auto',
