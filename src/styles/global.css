@@ -120,20 +120,6 @@ html[data-boot-skip] [data-boot] { display: none !important; }
   .pdr-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ---- Aggregate-impact stats — no orphan cells ----
-   4 across on desktop, 2×2 on tablet, stacked on mobile. */
-.impact-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1px;
-}
-@media (min-width: 560px) {
-  .impact-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 900px) {
-  .impact-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
 /* ---- Header ---- */
 .hdr-name { white-space: nowrap; }
 /* On phones the centered numbered nav crowds the wordmark; the ⌘K search
