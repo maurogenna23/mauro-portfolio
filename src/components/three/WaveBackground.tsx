@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Line } from '@react-three/drei';
 import * as THREE from 'three';
+
+/** points around a circle in the XY plane (front-facing to the camera) */
+function circlePoints(radius: number, segments = 160): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i <= segments; i++) {
+    const a = (i / segments) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * radius, Math.sin(a) * radius, 0));
+  }
+  return pts;
+}
 
 /**
  * Hero scene — a client-only WebGL island (content stays SSR for SEO).
@@ -174,6 +185,63 @@ function ParticleCore({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef
   );
 }
 
+/* --------------------- blueprint construction (Oryzo-style) --------------------- */
+
+function Construction({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef }) {
+  const group = useRef<THREE.Group>(null!);
+  const rings = useMemo(() => [2.75, 3.35], []);
+  const nodeAngles = useMemo(() => [0, 90, 180, 270], []);
+
+  useFrame((state, dt) => {
+    const g = group.current;
+    if (!g) return;
+    g.rotation.z += dt * 0.03 * (reduced ? 0 : 1);
+    g.rotation.x += (state.pointer.y * 0.28 - g.rotation.x) * 0.03;
+    g.rotation.y += (state.pointer.x * 0.28 - g.rotation.y) * 0.03;
+    g.scale.setScalar(1 + scroll.current * 0.18);
+  });
+
+  return (
+    <group ref={group}>
+      {/* dashed guide rings */}
+      {rings.map((r, i) => (
+        <Line
+          key={`ring-${i}`}
+          points={circlePoints(r)}
+          color="#5b9bff"
+          lineWidth={1}
+          dashed
+          dashSize={0.16}
+          gapSize={0.12}
+          transparent
+          opacity={0.34}
+        />
+      ))}
+      {/* crosshair guides */}
+      <Line
+        points={[new THREE.Vector3(-4.4, 0, 0), new THREE.Vector3(4.4, 0, 0)]}
+        color="#5b9bff" lineWidth={1} dashed dashSize={0.1} gapSize={0.16} transparent opacity={0.12}
+      />
+      <Line
+        points={[new THREE.Vector3(0, -4.4, 0), new THREE.Vector3(0, 4.4, 0)]}
+        color="#5b9bff" lineWidth={1} dashed dashSize={0.1} gapSize={0.16} transparent opacity={0.12}
+      />
+      {/* node handles at cardinal points */}
+      {rings.map((r) =>
+        nodeAngles.map((deg) => {
+          const a = (deg * Math.PI) / 180;
+          return (
+            <mesh key={`node-${r}-${deg}`} position={[Math.cos(a) * r, Math.sin(a) * r, 0]}>
+              <planeGeometry args={[0.075, 0.075]} />
+              <meshBasicMaterial color="#a9c7ff" transparent opacity={0.95} />
+            </mesh>
+          );
+        }),
+      )}
+    </group>
+  );
+}
+
 /* --------------------------------- island --------------------------------- */
 
 export default function WaveBackground() {
@@ -206,6 +274,7 @@ export default function WaveBackground() {
     >
       <WavesQuad reduced={reduced} scroll={scroll} />
       <ParticleCore reduced={reduced} scroll={scroll} />
+      <Construction reduced={reduced} scroll={scroll} />
     </Canvas>
   );
 }
