@@ -95,6 +95,7 @@ function WavesQuad({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef })
   const matRef = useRef<THREE.ShaderMaterial>(null!);
   const { size } = useThree();
   const target = useMemo(() => new THREE.Vector2(0, 0), []);
+  const ready = useRef(false);
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
@@ -113,6 +114,11 @@ function WavesQuad({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef })
     target.set(state.pointer.x, state.pointer.y);
     (u.uMouse.value as THREE.Vector2).lerp(target, 0.04);
     u.uScroll.value += (scroll.current - u.uScroll.value) * 0.06;
+    // tell the intro overlay the scene has painted its first frame
+    if (!ready.current) {
+      ready.current = true;
+      if (typeof window !== 'undefined') window.dispatchEvent(new Event('hero-ready'));
+    }
   });
 
   return (

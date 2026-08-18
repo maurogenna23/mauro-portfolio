@@ -4,6 +4,37 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
 ---
 
 <Layout>
+  <!-- Cinematic intro / preloader (covers the WebGL load, Oryzo-style) -->
+  <div id="intro" aria-hidden="true">
+    <svg class="i-svg" viewBox="0 0 240 240" fill="none">
+      <circle class="i-draw" cx="120" cy="120" r="92" pathLength="1" />
+      <circle class="i-draw" cx="120" cy="120" r="58" pathLength="1" />
+      <line class="i-draw" x1="8" y1="120" x2="232" y2="120" pathLength="1" />
+      <line class="i-draw" x1="120" y1="8" x2="120" y2="232" pathLength="1" />
+      <circle class="i-center" cx="120" cy="120" r="3.5" />
+      <rect class="i-node" x="116" y="24" width="8" height="8" />
+      <rect class="i-node" x="208" y="116" width="8" height="8" />
+      <rect class="i-node" x="116" y="208" width="8" height="8" />
+      <rect class="i-node" x="24" y="116" width="8" height="8" />
+    </svg>
+    <div class="i-label">
+      <div class="i-name">Mauro Genna</div>
+      <div class="i-meta"><span class="i-num">00</span><span>/</span><span>AI ENGINEER</span></div>
+    </div>
+  </div>
+  <script is:inline>
+    (function () {
+      try {
+        var r = document.documentElement;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            sessionStorage.getItem('mg-intro') === '1') {
+          r.setAttribute('data-intro-skip', '');
+        }
+        setTimeout(function () { r.setAttribute('data-intro-timeout', ''); }, 9000);
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- 3D flowing colour-wave background (client-only WebGL island) -->
   <WaveBackground client:only="react" />
 
@@ -135,6 +166,26 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
   }
   body a { color: inherit; text-decoration: none; }
   ::selection { background: var(--accent-1); color: #061024; }
+
+  /* ---- cinematic intro / preloader ---- */
+  #intro {
+    position: fixed; inset: 0; z-index: 999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    background: #050912;
+  }
+  :root[data-intro-skip] #intro,
+  :root[data-intro-timeout] #intro { display: none; }
+  #intro .i-svg { width: min(44vmin, 320px); height: auto; overflow: visible; }
+  #intro .i-draw { fill: none; stroke: #5b9bff; stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  #intro .i-center { fill: #a9c7ff; }
+  #intro .i-node { fill: #a9c7ff; transform-box: fill-box; transform-origin: center; }
+  #intro .i-label { text-align: center; }
+  #intro .i-name { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  #intro .i-meta {
+    margin-top: 9px; display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--faint);
+  }
+  #intro .i-num { color: var(--accent-1); font-variant-numeric: tabular-nums; }
 </style>
 
 <style>
@@ -254,6 +305,46 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  /* ---- cinematic intro: draw the construction, count up, then reveal ---- */
+  const intro = document.getElementById('intro');
+  if (intro && !document.documentElement.hasAttribute('data-intro-skip')) {
+    let heroReady = false;
+    window.addEventListener('hero-ready', () => { heroReady = true; }, { once: true });
+
+    const num = intro.querySelector('.i-num');
+    const counter = { v: 0 };
+    const setNum = () => { if (num) num.textContent = String(Math.round(counter.v)).padStart(2, '0'); };
+
+    const tl = gsap.timeline();
+    tl.to(intro.querySelectorAll('.i-draw'), { strokeDashoffset: 0, duration: 1.0, ease: 'power2.inOut', stagger: 0.12 }, 0.15);
+    tl.from(intro.querySelectorAll('.i-node'), { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(2)', stagger: 0.06 }, 0.7);
+    tl.from(intro.querySelector('.i-label'), { y: 12, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.9);
+    tl.to(counter, { v: 92, duration: 1.9, ease: 'power1.out', onUpdate: setNum }, 0.15);
+    tl.call(finish);
+
+    function finish() {
+      const go = () => {
+        gsap.to(counter, { v: 100, duration: 0.4, onUpdate: setNum });
+        const exit = gsap.timeline({
+          delay: 0.3,
+          onComplete: () => { intro.remove(); try { sessionStorage.setItem('mg-intro', '1'); } catch (e) {} },
+        });
+        exit.to(intro.querySelector('.i-svg'), { scale: 1.18, opacity: 0, duration: 0.7, ease: 'power2.in' }, 0);
+        exit.to(intro.querySelector('.i-label'), { opacity: 0, y: -8, duration: 0.4 }, 0);
+        exit.to(intro, { opacity: 0, duration: 0.6, ease: 'power2.inOut' }, 0.15);
+      };
+      if (heroReady) go();
+      else {
+        window.addEventListener('hero-ready', go, { once: true });
+        setTimeout(go, 8000); // never hang
+      }
+    }
+
+    const skip = () => { if (tl.progress() < 1) tl.progress(1); };
+    window.addEventListener('keydown', skip, { once: true });
+    intro.addEventListener('click', skip, { once: true });
+  }
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduce) {
