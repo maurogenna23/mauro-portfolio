@@ -20,11 +20,11 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
     </header>
 
     <section class="hero" id="top">
-      <span class="eyebrow">AI Engineer &amp; Full Stack Developer</span>
-      <h1>I build <em>AI products</em><br />that actually ship.</h1>
+      <span class="eyebrow">AI Engineer &amp; Full-Stack Developer · Founder of Arnie</span>
+      <h1>From the <em>agent</em><br />to the <em>interface</em>.</h1>
       <p class="lead">
-        Agentic assistants, RAG pipelines, voice automation — and the polished
-        frontends that make them usable. Ask my AI about it.
+        I ship production AI — agentic assistants, RAG pipelines and voice
+        automation — plus the polished frontends that make them usable.
       </p>
 
       <div class="prompt">
@@ -46,8 +46,6 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
         <a class="btn btn-primary" href="#work">See my work</a>
         <a class="btn btn-ghost" href="#contact">Download CV</a>
       </div>
-
-      <div class="scroll-hint">↓&nbsp;&nbsp;Scroll to explore</div>
     </section>
   </div>
 </Layout>
@@ -160,12 +158,4 @@ import WaveBackground from '../components/three/WaveBackground.tsx';
   }
 
   .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px; }
-
-  .scroll-hint {
-    margin-top: 54px; font: 11px var(--mono); letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--faint);
-    animation: bob 2.4s ease-in-out infinite;
-  }
-  @keyframes bob { 50% { transform: translateY(6px); } }
-  @media (prefers-reduced-motion: reduce) { .scroll-hint { animation: none; } }
 </style>
