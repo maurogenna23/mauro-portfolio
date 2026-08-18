@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Line } from '@react-three/drei';
+import { Line, Environment, Lightformer, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 /** points around a circle in the XY plane (front-facing to the camera) */
@@ -136,58 +136,45 @@ function WavesQuad({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef })
   );
 }
 
-/* ------------------------------ particle core ------------------------------ */
+/* ------------------------------- glass core -------------------------------- */
 
-function ParticleCore({ reduced, scroll }: { reduced: boolean; scroll: ScrollRef }) {
-  const ref = useRef<THREE.Points>(null!);
-  const N = 2600;
+function GlassCore({ reduced }: { reduced: boolean }) {
+  const ref = useRef<THREE.Mesh>(null!);
 
-  const positions = useMemo(() => {
-    const arr = new Float32Array(N * 3);
-    const golden = Math.PI * (1 + Math.sqrt(5));
-    for (let i = 0; i < N; i++) {
-      const y = 1 - (i / (N - 1)) * 2; // 1 .. -1
-      const radius = Math.sqrt(1 - y * y);
-      const theta = golden * i;
-      arr[i * 3] = Math.cos(theta) * radius;
-      arr[i * 3 + 1] = y;
-      arr[i * 3 + 2] = Math.sin(theta) * radius;
-    }
-    return arr;
-  }, []);
-
-  const tiltTarget = useRef(new THREE.Vector2());
-
-  useFrame((state, dt) => {
-    const p = ref.current;
-    if (!p) return;
-    const spin = reduced ? 0 : 1;
-    p.rotation.y += dt * 0.08 * spin;
-    // ease tilt toward the cursor
-    tiltTarget.current.set(state.pointer.y * 0.5, state.pointer.x * 0.5);
-    p.rotation.x += (tiltTarget.current.x - p.rotation.x) * 0.03;
-    p.rotation.z += (-state.pointer.x * 0.12 - p.rotation.z) * 0.03;
-    // breathe + tighten a touch as you scroll
-    const breathe = reduced ? 1 : 1 + Math.sin(state.clock.elapsedTime * 0.6) * 0.03;
-    const s = (2.35 - scroll.current * 0.45) * breathe;
-    p.scale.setScalar(s);
+  useFrame((state) => {
+    const m = ref.current;
+    if (!m) return;
+    // scroll scrubs the rotation (connected "frames") + a slow idle spin
+    const heroP =
+      typeof window !== 'undefined'
+        ? Math.min(1, window.scrollY / Math.max(1, window.innerHeight))
+        : 0;
+    const targetY = heroP * Math.PI * 2.4 + (reduced ? 0 : state.clock.elapsedTime * 0.12);
+    m.rotation.y += (targetY - m.rotation.y) * 0.08;
+    m.rotation.x += (state.pointer.y * 0.35 - m.rotation.x) * 0.04;
+    m.rotation.z += (-state.pointer.x * 0.15 - m.rotation.z) * 0.04;
   });
 
   return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.02}
-        sizeAttenuation
-        color="#8fbaff"
-        transparent
-        opacity={0.9}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
+    <mesh ref={ref} scale={1.75}>
+      <icosahedronGeometry args={[1, 0]} />
+      <MeshTransmissionMaterial
+        samples={6}
+        resolution={512}
+        thickness={1.3}
+        roughness={0.08}
+        transmission={1}
+        ior={1.45}
+        chromaticAberration={0.06}
+        anisotropy={0.2}
+        distortion={0.15}
+        distortionScale={0.4}
+        temporalDistortion={0.08}
+        color={'#c3daff'}
+        attenuationColor={'#3f6fff'}
+        attenuationDistance={2.6}
       />
-    </points>
+    </mesh>
   );
 }
 
@@ -279,7 +266,12 @@ export default function WaveBackground() {
       aria-hidden="true"
     >
       <WavesQuad reduced={reduced} scroll={scroll} />
-      <ParticleCore reduced={reduced} scroll={scroll} />
+      <Environment resolution={256}>
+        <Lightformer form="rect" intensity={2.2} position={[0, 3, 3]} scale={[7, 3, 1]} color="#a9c7ff" />
+        <Lightformer form="rect" intensity={1.5} position={[-4, 1, 2]} scale={[3, 5, 1]} color="#5b9bff" />
+        <Lightformer form="circle" intensity={1.8} position={[3, -2, 3]} scale={3} color="#ffffff" />
+      </Environment>
+      <GlassCore reduced={reduced} />
       <Construction reduced={reduced} scroll={scroll} />
     </Canvas>
   );
