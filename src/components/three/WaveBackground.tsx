@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -26,6 +26,7 @@ const fragmentShader = /* glsl */ `
   uniform float uTime;
   uniform vec2  uRes;
   uniform vec2  uMouse;
+  uniform float uScroll;  // 0 (top) .. 1 (bottom)
 
   vec2 hash(vec2 p) {
     p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
@@ -58,11 +59,12 @@ const fragmentShader = /* glsl */ `
     float f = fbm(p * 1.6 + r * 2.0);
     f = f * 0.5 + 0.5;
 
-    // blue / marine palette
-    vec3 deep  = vec3(0.015, 0.035, 0.09);   // near-black navy
-    vec3 navy  = vec3(0.04,  0.10,  0.32);   // marine
-    vec3 azure = vec3(0.18,  0.42,  1.00);   // bright azure
-    vec3 cyan  = vec3(0.34,  0.74,  1.00);   // cyan highlight
+    // blue / marine palette — travels through the cool family as you scroll
+    float s = uScroll;
+    vec3 deep  = mix(vec3(0.015, 0.035, 0.09), vec3(0.03, 0.02, 0.10), s);   // navy → indigo-black
+    vec3 navy  = mix(vec3(0.04,  0.10,  0.32), vec3(0.10, 0.06, 0.36), s);   // marine → indigo
+    vec3 azure = mix(vec3(0.18,  0.42,  1.00), vec3(0.42, 0.28, 1.00), s);   // azure → violet-blue
+    vec3 cyan  = mix(vec3(0.34,  0.74,  1.00), vec3(0.30, 0.85, 0.92), s);   // cyan → teal
 
     vec3 col = mix(deep, navy, smoothstep(0.10, 0.55, f));
     col = mix(col, azure, smoothstep(0.45, 0.85, f) * 0.85);
@@ -80,12 +82,28 @@ function Waves({ reduced }: { reduced: boolean }) {
   const matRef = useRef<THREE.ShaderMaterial>(null!);
   const { size } = useThree();
   const target = useMemo(() => new THREE.Vector2(0, 0), []);
+  const scroll = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      scroll.current = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
       uRes: { value: new THREE.Vector2(1, 1) },
       uMouse: { value: new THREE.Vector2(0, 0) },
+      uScroll: { value: 0 },
     }),
     [],
   );
@@ -97,6 +115,8 @@ function Waves({ reduced }: { reduced: boolean }) {
     u.uRes.value.set(size.width, size.height);
     target.set(state.pointer.x, state.pointer.y);
     (u.uMouse.value as THREE.Vector2).lerp(target, 0.04);
+    // ease the scroll-driven colour shift
+    u.uScroll.value += (scroll.current - u.uScroll.value) * 0.06;
   });
 
   return (
