@@ -9,7 +9,7 @@ export interface Props {
 
 const {
   title = 'Mauro Genna — Product Engineer | Full Stack & AI-Powered Products',
-  description = 'Product Engineer building full stack and AI-powered products end to end — agentic assistants, retrieval pipelines, voice automation, and the backends and interfaces around them. Founder of Arnie. TypeScript, NestJS, Next.js, PostgreSQL, OpenAI.',
+  description = 'Product Engineer building AI-powered products from the first customer conversation to production. Founder of Arnie. NestJS, Next.js, PostgreSQL, OpenAI.',
   image = '/og-mauro-genna.png',
 } = Astro.props;
 
@@ -40,6 +40,10 @@ const personSchema = {
   },
   knowsAbout: [
     'Product Engineering',
+    'UX Design',
+    'UI Design',
+    'Design Systems',
+    'Frontend Architecture',
     'TypeScript',
     'NestJS',
     'Node.js',
@@ -75,7 +79,8 @@ const personSchema = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Mauro Genna" />
-    <meta name="theme-color" content="#080a0f" />
+    <meta name="theme-color" content="#faf8f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1117" media="(prefers-color-scheme: dark)" />
     <meta
       name="keywords"
       content="Mauro Genna, product engineer, full stack engineer, AI-powered products, AI engineer, RAG, function calling, agentic AI, voice AI engineer, LLM integration, founding engineer, AI SaaS, TypeScript, NestJS, Next.js, PostgreSQL, OpenAI, voice AI, Arnie"
@@ -88,7 +93,7 @@ const personSchema = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content="Mauro Genna — Product Engineer | Full Stack & AI-Powered Products" />
+    <meta property="og:image:alt" content="Mauro Genna, Product Engineer — I build AI-powered products from the first customer conversation to production." />
     <meta property="og:locale" content="en_US" />
     <meta property="profile:first_name" content="Mauro" />
     <meta property="profile:last_name" content="Genna" />
@@ -98,25 +103,14 @@ const personSchema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-
-    <!-- Arnie screenshot CDN (Cloudflare R2) -->
-    <link rel="preconnect" href="https://pub-609eaf8a36ee462496af57602c6a54ed.r2.dev" crossorigin />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts: self-hosted, preloaded so the text paints once. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/geist-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
-
-    <!-- Skip the boot animation on repeat visits within the same session. -->
-    <script is:inline>
-      try {
-        if (sessionStorage.getItem('mg-boot') === '1')
-          document.documentElement.setAttribute('data-boot-skip', '');
-      } catch (e) {}
-    </script>
 
     <script
       type="application/ld+json"
