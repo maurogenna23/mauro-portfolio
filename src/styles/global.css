@@ -378,21 +378,14 @@ img {
   flex: none;
   border-radius: 8px;
 }
-/* Not every case carries the same weight. The lead study is the one
-   with the hardest decision behind it; the supporting two are set a
-   step down so the section has a ranking instead of three blocks of
-   identical size. */
+/* Every case now carries a visual that answers its own question — a
+   gallery or a figure — so the ranking lives in the content rather than
+   in two sizes of the same heading. */
 .case__title {
   margin-top: var(--sp-3);
-  max-width: 26ch;
-  font-size: var(--fs-lead);
-  font-weight: 600;
-  line-height: 1.22;
-  letter-spacing: -0.02em;
-}
-.case--lead .case__title {
   max-width: 24ch;
   font-size: var(--fs-title);
+  font-weight: 600;
   line-height: 1.18;
   letter-spacing: -0.025em;
 }
@@ -407,36 +400,23 @@ img {
    the fact that matters; the detail stays in the list below. */
 .case__outcome {
   margin-top: var(--sp-4);
-  max-width: 34ch;
-  font-size: var(--fs-body);
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.015em;
-  color: var(--text);
-}
-.case--lead .case__outcome {
   max-width: 32ch;
   font-size: var(--fs-lead);
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 /* Problem / decision / result as a description list: the label is
    a term, the passage is its definition. */
 .pdr {
-  margin-top: var(--sp-5);
+  margin-top: var(--sp-6);
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
   column-gap: var(--sp-5);
-  row-gap: var(--sp-4);
-  align-items: baseline;
-}
-/* The lead studies get room to breathe; the supporting two are set
-   tighter so the section reads as a ranking on the page, not just in
-   the type sizes. */
-.case--lead .pdr {
-  margin-top: var(--sp-6);
   row-gap: var(--sp-5);
+  align-items: baseline;
 }
 .pdr dt {
   font-size: var(--fs-label);

@@ -45,6 +45,7 @@ const cases = [
     result:
       "Captiview became the system of record for every subscription, with the full invoice history attached to the customer it belonged to instead of living in a third-party interface.",
     stack: 'NestJS · PostgreSQL · Payment processor API · Data reconciliation',
+    link: { href: 'https://www.captiview.com/', label: 'The platform: captiview.com' },
     figure: {
       q: 'Two systems held the same customer and disagreed. Which one was right?',
       steps: [
@@ -63,13 +64,25 @@ const cases = [
     meta: 'Full Stack Engineer · UseTeam · Voice AI · 2025 → now',
     title: 'Turning resident phone calls into structured, routed records',
     problem:
-      "Residents reported incidents by phone, in a volume staff often couldn't keep up with — missed or delayed responses, and no consistent record of what was reported or when.",
+      "The building owner took the incident calls himself and could not answer them all. Residents reported by phone, in their own words and at any hour, so reports arrived incomplete or never arrived — and nothing kept a consistent record of what had been said or when.",
     decision:
-      'Built a voice-automation pipeline on Retell AI, integrated with backend services to capture structured incident data from resident calls and automatically trigger downstream workflows — email, SMS, and admin processes.',
+      "A voice agent on Retell AI that runs an interview rather than a transcription. It asks what happened, how long ago, and whether the caller is on site, and does not close until it has all three. The answers become a categorised incident written to the system, and the owner is notified with the category already applied. Each call is recorded and scored for tone, so the owner can see whether the person was calm, nervous or angry before deciding what to handle first.",
     outcome: 'Deployed across 50+ residential communities in Spain.',
     result:
-      'Automated incident intake end-to-end — every call is now logged with what was reported and when, without requiring a human to answer or transcribe it manually.',
-    stack: 'Retell AI · NestJS · Next.js',
+      "The owner stopped being the phone line. Every report is logged, categorised and delivered with the caller's state attached, without anyone answering or transcribing it by hand.",
+    stack: 'Retell AI · NestJS · Next.js · Sentiment analysis',
+    figure: {
+      q: 'What does the agent have to know before it can hang up?',
+      steps: [
+        { k: 'Call', v: 'A resident describes it in their own words' },
+        { k: 'Interview', v: 'What happened, how long ago, are you on site', tone: 'propose' },
+        { k: 'Structure', v: 'The answers become a categorised incident' },
+        { k: 'File', v: 'Written to the system, the owner notified', tone: 'execute' },
+        { k: 'Tone', v: 'The call is scored, so urgency travels with the facts' },
+      ],
+      caption:
+        'The agent does not close until it has all three answers. That was the decision: a fixed set the report cannot be filed without, so the owner never receives an incident missing the thing he needs in order to act.',
+    },
   },
 ];
 
@@ -208,7 +221,7 @@ const rows = [
       <div class="wrap">
         <h2 class="sec">Work</h2>
 
-        <article class="case case--lead" data-reveal>
+        <article class="case" data-reveal>
           <div class="case__brand">
             <Image
               class="case__logo"
@@ -295,7 +308,7 @@ const rows = [
 
         {
           cases.map((c) => (
-            <article class={c.figure ? 'case case--lead' : 'case'} id={c.id} data-reveal>
+            <article class="case" id={c.id} data-reveal>
               <p class="case__meta">{c.meta}</p>
               <h3 class="case__title">{c.title}</h3>
               <p class="case__outcome">{c.outcome}</p>
@@ -325,6 +338,12 @@ const rows = [
                 )}
 
               <p class="stack-line">{c.stack}</p>
+              {c.link && (
+                <a class="case__link" href={c.link.href} target="_blank" rel="noopener">
+                  {c.link.label}
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              )}
             </article>
           ))
         }
