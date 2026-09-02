@@ -5,12 +5,14 @@ export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  noindex?: boolean;
 }
 
 const {
   title = 'Mauro Genna — Product Engineer | Full Stack & AI-Powered Products',
   description = 'Product Engineer building AI-powered products from the first customer conversation to production. Founder of Arnie. NestJS, Next.js, PostgreSQL, OpenAI.',
   image = '/og-mauro-genna.png',
+  noindex = false,
 } = Astro.props;
 
 // Absolute URLs (require `site` in astro.config.mjs).
@@ -74,6 +76,7 @@ const personSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>

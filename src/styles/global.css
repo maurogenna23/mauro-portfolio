@@ -853,6 +853,63 @@ a.row:hover span:last-child {
   transform: none;
 }
 
+/* ============================================================
+   Print — a recruiter saving the page as a PDF should get a
+   readable document, not a screenshot of a website.
+   ============================================================ */
+
+@media print {
+  :root {
+    --bg: #fff;
+    --bg-raised: #fff;
+    --border: #bbb;
+    --rule: #999;
+    --text: #000;
+    --text-muted: #333;
+    --text-faint: #555;
+    --propose: #000;
+    --execute: #000;
+  }
+  .header,
+  .skip,
+  .actions,
+  .footer {
+    display: none;
+  }
+  .section {
+    padding-block: var(--sp-6) 0;
+  }
+  .hero {
+    padding-block: 0 var(--sp-6);
+  }
+  /* The gallery leaves the column on screen; on paper it has nowhere
+     to go, so it returns to the text width. */
+  .gallery {
+    margin-inline: 0;
+  }
+  .case,
+  .role,
+  .cap,
+  .note,
+  .gallery figure {
+    break-inside: avoid;
+  }
+  .sec {
+    break-after: avoid;
+  }
+  /* Links lose their destination on paper unless it is printed. */
+  a[href^='http']::after,
+  a[href^='mailto']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    color: var(--text-faint);
+    word-break: break-all;
+  }
+  .sr-only {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
