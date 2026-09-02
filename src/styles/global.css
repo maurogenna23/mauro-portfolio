@@ -582,6 +582,43 @@ img {
   }
 }
 
+/* A completeness contract, not a sequence. The voice agent's decision
+   is a set — three answers the report cannot be filed without — so it
+   gets a set's shape rather than the chain the other two figures use.
+   The colours keep their meaning: amber is what is still being
+   gathered, green is the moment it becomes a record. */
+.reqs {
+  margin-top: var(--sp-4);
+  padding: var(--sp-5) var(--sp-6);
+  background: var(--bg-raised);
+  border-radius: 10px;
+  max-width: 46ch;
+}
+.reqs__k {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  color: var(--propose);
+}
+.reqs__list {
+  margin-top: var(--sp-4);
+  display: grid;
+  gap: var(--sp-3);
+}
+.reqs__list li {
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+.reqs__gate {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  color: var(--execute);
+}
+
 /* ============================================================
    How I work — statements, not a process diagram.
    ============================================================ */

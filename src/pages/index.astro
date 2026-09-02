@@ -71,17 +71,11 @@ const cases = [
     result:
       "The owner stopped being the phone line. Every report is logged, categorised and delivered with the caller's state attached, without anyone answering or transcribing it by hand.",
     stack: 'Retell AI · NestJS · Next.js · Sentiment analysis',
-    figure: {
+    requirements: {
       q: 'What does the agent have to know before it can hang up?',
-      steps: [
-        { k: 'Call', v: 'A resident describes it in their own words' },
-        { k: 'Interview', v: 'What happened, how long ago, are you on site', tone: 'propose' },
-        { k: 'Structure', v: 'The answers become a categorised incident' },
-        { k: 'File', v: 'Written to the system, the owner notified', tone: 'execute' },
-        { k: 'Tone', v: 'The call is scored, so urgency travels with the facts' },
-      ],
-      caption:
-        'The agent does not close until it has all three answers. That was the decision: a fixed set the report cannot be filed without, so the owner never receives an incident missing the thing he needs in order to act.',
+      label: 'Required before the call can close',
+      items: ['What happened', 'How long ago', 'Whether the caller is on site'],
+      gate: 'All three present — the incident is filed, categorised, and the owner notified.',
     },
   },
 ];
@@ -320,6 +314,21 @@ const rows = [
                 <dt>Result</dt>
                 <dd>{c.result}</dd>
               </dl>
+
+              {c.requirements && (
+                <figure class="figure">
+                  <p class="figure__q">{c.requirements.q}</p>
+                  <div class="reqs">
+                    <p class="reqs__k">{c.requirements.label}</p>
+                    <ul class="reqs__list">
+                      {c.requirements.items.map((i) => (
+                        <li>{i}</li>
+                      ))}
+                    </ul>
+                    <p class="reqs__gate">{c.requirements.gate}</p>
+                  </div>
+                </figure>
+              )}
 
               {c.figure && (
                   <figure class="figure">
