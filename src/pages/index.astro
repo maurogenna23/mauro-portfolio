@@ -20,19 +20,43 @@ const cases = [
     result:
       "The propose/execute pattern became the team's default for any AI-driven feature touching persistent state.",
     stack: 'OpenAI function calling · NestJS · Next.js · PostgreSQL',
+    figure: {
+      q: 'Where does the model stop and a person take over?',
+      steps: [
+        { k: 'Request', v: 'Scoped to the role that made it' },
+        { k: 'Model', v: 'Reasons over that role’s toolset only' },
+        { k: 'Proposes', v: 'A structured change. No write happens.', tone: 'propose' },
+        { k: 'Human confirms', v: 'A person approves the proposal' },
+        { k: 'Executes', v: 'The write is committed', tone: 'execute' },
+      ],
+      caption:
+        "The model's output is a proposal, never a write. Every change to persistent state passes through a human approval before it is committed.",
+    },
   },
   {
     id: 'billing',
     meta: 'Software Engineer · Highpoint Growth Networks · Billing · 2024–2026',
     title: 'Moving billing ownership in-house without dropping a subscription',
     problem:
-      "Billing and subscription data lived entirely inside a third-party provider's application. Captiview — Highpoint's ad-tech platform — had no ownership of or visibility into its own customer records, and the dependency grew as the platform scaled.",
+      "Customers were billed through an external processor, but Captiview — Highpoint's ad-tech platform — held no record of it. The client wanted billing to run inside Captiview while keeping the processor underneath. The obstacle was that both systems already held records for the same customers and disagreed: an account Captiview showed as onboarded in August had existed in the processor since March. There was no shared key between them.",
     decision:
-      "Architected an integration with the external processor's API so Captiview, not the provider's application, became the system of record for every subscription — with the full billing history of existing customers synced into its own database.",
+      "Rather than reconciling by hand or trusting one side, I built a system to do it: pull every customer from the processor, match each one to its Captiview account, and compare them field by field so conflicts surfaced instead of being averaged away. Where the two disagreed, Captiview won — its record was the newer one — and that rule was fixed before the first record moved, not decided case by case. The processor's customer ID was then stored on the Captiview account permanently, so every invoice pulled afterwards attached itself to the right customer.",
     outcome: 'Hundreds of active subscriptions integrated with zero disruption to existing customers.',
     result:
-      "Captiview now owns and controls its subscription data instead of depending solely on the third-party provider's interface.",
-    stack: 'NestJS · PostgreSQL · Payment processor API',
+      "Captiview became the system of record for every subscription, with the full invoice history attached to the customer it belonged to instead of living in a third-party interface.",
+    stack: 'NestJS · PostgreSQL · Payment processor API · Data reconciliation',
+    figure: {
+      q: 'Two systems held the same customer and disagreed. Which one was right?',
+      steps: [
+        { k: 'Pull', v: 'Every customer record out of the processor' },
+        { k: 'Match', v: 'Each one to its account inside Captiview' },
+        { k: 'Compare', v: 'Field by field, so conflicts surface', tone: 'propose' },
+        { k: 'Resolve', v: 'Captiview wins — its record is the newer one', tone: 'execute' },
+        { k: 'Link', v: "The processor's ID kept on the account, so invoices land on the right customer" },
+      ],
+      caption:
+        'The two systems shared no key and disagreed on dates. Fixing the rule before the first record moved turned hundreds of individual judgement calls into one decision made once.',
+    },
   },
   {
     id: 'voice',
@@ -47,14 +71,6 @@ const cases = [
       'Automated incident intake end-to-end — every call is now logged with what was reported and when, without requiring a human to answer or transcribe it manually.',
     stack: 'Retell AI · NestJS · Next.js',
   },
-];
-
-const chain = [
-  { k: 'Request', v: 'Scoped to the role that made it' },
-  { k: 'Model', v: 'Reasons over that role’s toolset only' },
-  { k: 'Proposes', v: 'A structured change. No write happens.', tone: 'propose' },
-  { k: 'Human confirms', v: 'A person approves the proposal' },
-  { k: 'Executes', v: 'The write is committed', tone: 'execute' },
 ];
 
 const notes = [
@@ -279,7 +295,7 @@ const rows = [
 
         {
           cases.map((c) => (
-            <article class={c.id === 'multi-agent' ? 'case case--lead' : 'case'} id={c.id} data-reveal>
+            <article class={c.figure ? 'case case--lead' : 'case'} id={c.id} data-reveal>
               <p class="case__meta">{c.meta}</p>
               <h3 class="case__title">{c.title}</h3>
               <p class="case__outcome">{c.outcome}</p>
@@ -292,26 +308,21 @@ const rows = [
                 <dd>{c.result}</dd>
               </dl>
 
-              {c.id === 'multi-agent' && (
-                <figure class="figure">
-                  <p class="figure__q">
-                    Where does the model stop and a person take over?
-                  </p>
-                  <div class="chain">
-                    {chain.map((s) => (
-                      <div class={s.tone ? `chain__step chain__step--${s.tone}` : 'chain__step'}>
-                        <div class="chain__k">{s.k}</div>
-                        <div class="chain__rule" />
-                        <div class="chain__v">{s.v}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <figcaption class="figure__caption">
-                    The model's output is a proposal, never a write. Every change to persistent
-                    state passes through a human approval before it is committed.
-                  </figcaption>
-                </figure>
-              )}
+              {c.figure && (
+                  <figure class="figure">
+                    <p class="figure__q">{c.figure.q}</p>
+                    <div class="chain">
+                      {c.figure.steps.map((s) => (
+                        <div class={s.tone ? `chain__step chain__step--${s.tone}` : 'chain__step'}>
+                          <div class="chain__k">{s.k}</div>
+                          <div class="chain__rule" />
+                          <div class="chain__v">{s.v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <figcaption class="figure__caption">{c.figure.caption}</figcaption>
+                  </figure>
+                )}
 
               <p class="stack-line">{c.stack}</p>
             </article>
