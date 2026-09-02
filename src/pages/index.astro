@@ -5,6 +5,7 @@ import arnieLogo from '../assets/arnie-logo.webp';
 import arnieAssistant from '../assets/arnie-assistant.webp';
 import arnieDashboard from '../assets/arnie-dashboard.webp';
 import arnieAnalytics from '../assets/arnie-analytics.webp';
+import mauro from '../assets/mauro.webp';
 
 const cases = [
   {
@@ -423,12 +424,24 @@ const rows = [
     <section class="section" id="contact">
       <div class="wrap">
         <h2 class="sec">Contact</h2>
-        <p class="lead">Currently open to Product Engineer roles.</p>
-        <p class="prose contact__intro">
-          If you are hiring for a role where one person owns the product decision and the code that
-          follows from it, or you want to talk about Arnie for your business, write to me.
-        </p>
-        <a class="contact__email" href="mailto:gennamauro18@gmail.com">gennamauro18@gmail.com</a>
+        <div class="contact__head">
+          <div>
+            <p class="lead">Currently open to Product Engineer roles.</p>
+            <p class="prose contact__intro">
+              If you are hiring for a role where one person owns the product decision and the code
+              that follows from it, or you want to talk about Arnie for your business, write to me.
+            </p>
+            <a class="contact__email" href="mailto:gennamauro18@gmail.com">gennamauro18@gmail.com</a>
+          </div>
+          <Image
+            class="contact__photo"
+            src={mauro}
+            alt="Mauro Genna"
+            widths={[200, 400, 560]}
+            sizes="(max-width: 700px) 148px, 200px"
+            loading="lazy"
+          />
+        </div>
 
         <div class="rows">
           <div class="row">

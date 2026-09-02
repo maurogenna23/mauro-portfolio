@@ -732,6 +732,33 @@ img {
    Contact
    ============================================================ */
 
+/* The portrait sits beside the opening lines rather than above them:
+   the section's job is the email address, and a photo placed first
+   would outrank it. At 200px it reads as a face without becoming the
+   subject of the section. */
+.contact__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: var(--sp-7);
+  align-items: start;
+}
+.contact__photo {
+  width: 200px;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-raised);
+}
+@media (max-width: 700px) {
+  .contact__head {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+  }
+  .contact__photo {
+    width: 148px;
+  }
+}
+
 .contact__intro {
   margin-top: var(--sp-4);
 }
