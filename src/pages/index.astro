@@ -139,6 +139,9 @@ const capabilities = [
   },
 ];
 
+// Generated at build time so the footer cannot go stale on its own.
+const updated = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
 const rows = [
   { k: 'Live product', v: 'www.arniechat.com', href: 'https://www.arniechat.com' },
   { k: 'Code', v: 'github.com/maurogenna23', href: 'https://github.com/maurogenna23' },
@@ -227,7 +230,7 @@ const rows = [
                 class="gallery__img"
                 src={arnieAssistant}
                 alt="Arnie's assistant configuration screen, with type, identity, personality, instructions and capabilities as five steps"
-                widths={[480, 760, 1120, 1600]}
+                widths={[480, 760, 1120, 1600, 2240]}
                 sizes="(max-width: 760px) calc(100vw - 3rem), min(1120px, calc(100vw - 3rem))"
                 loading="lazy"
               />
@@ -248,7 +251,8 @@ const rows = [
                   loading="lazy"
                 />
                 <figcaption>
-                  The dashboard leads with setup progress, then with what the assistant did.
+                  The dashboard answers "is it working?" before "how much?" — health first, then
+                  the numbers, then the conversations themselves.
                 </figcaption>
               </figure>
               <figure>
@@ -414,8 +418,8 @@ const rows = [
 
   <footer class="footer">
     <div class="wrap footer__inner">
-      <span>© 2026 Mauro Genna</span>
-      <span>Product Engineer</span>
+      <span>© 2026 Mauro Genna · Product Engineer</span>
+      <span>Astro · self-hosted Geist · updated {updated}</span>
     </div>
   </footer>
 </Layout>

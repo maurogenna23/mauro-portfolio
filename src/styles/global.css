@@ -121,16 +121,21 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /* The inverse of the paper, not the blue-tinted near-black this
+     started from — that palette is the default of the category the
+     light theme was chosen to leave, and half the audience browses
+     with a dark system. Both themes are designed; neither is a
+     leftover. */
   :root {
-    --bg: #0e1117;
-    --bg-raised: #151a23;
-    --border: #222936;
+    --bg: #17150f;
+    --bg-raised: #211e16;
+    --border: #322d22;
 
-    --text: #e6ebf4;
-    --text-muted: #a2adc0;
-    --text-faint: #8492a8;
+    --text: #f0ece3;
+    --text-muted: #aaa494;
+    --text-faint: #8d8676;
 
-    --rule: #3d4757;
+    --rule: #4a4436;
 
     --propose: #f0a742;
     --execute: #3fe08a;
