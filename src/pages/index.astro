@@ -478,6 +478,19 @@ const rows = [
 </Layout>
 
 <script>
+  import { track } from '@vercel/analytics';
+
+  /* Two intent signals. Page views say the link was opened; these say the
+     reader went looking for a way to act on it. Delegated from the document
+     so no listener is attached per link, and both fire on the anchor the
+     click actually landed inside. */
+  document.addEventListener('click', (event) => {
+    const link = (event.target as HTMLElement).closest('a');
+    const href = link?.getAttribute('href') ?? '';
+    if (href.endsWith('.pdf')) track('cv_download');
+    else if (href.startsWith('mailto:')) track('email_click');
+  });
+
   /* One behaviour: mark a block as it enters the reading flow.
      Skipped under reduced-motion, and the hiding styles are gated
      behind `.reveal-ready`, so no-JS and reduced-motion visitors
