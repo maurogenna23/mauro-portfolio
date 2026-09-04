@@ -823,8 +823,9 @@ a.row:hover span:last-child {
   top: 0;
   z-index: 40;
   background: color-mix(in oklab, var(--bg) 90%, transparent);
+  /* Lightning CSS adds the -webkit- prefix from the targets in
+     astro.config.mjs, so the prefixed copy is not written by hand. */
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 .header__inner {
   display: flex;
