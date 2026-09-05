@@ -1,11 +1,21 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import arnieLogo from '../assets/arnie-logo.webp';
 import arnieAssistant from '../assets/arnie-assistant.webp';
 import arnieDashboard from '../assets/arnie-dashboard.webp';
 import arnieAnalytics from '../assets/arnie-analytics.webp';
 import mauro from '../assets/mauro.webp';
+
+/* The screenshots are dense product UI. On a phone they render at 342px — 14%
+   of the 2400px source — which is sharp but unreadable. Each links to a
+   full-size copy so the browser's own viewer does the zooming, rather than the
+   page shipping a lightbox to do it worse. */
+const [assistantFull, dashboardFull, analyticsFull] = await Promise.all(
+  [arnieAssistant, arnieDashboard, arnieAnalytics].map((src) =>
+    getImage({ src, width: 2400, format: 'webp' })
+  )
+);
 
 const cases = [
   {
@@ -251,47 +261,58 @@ const rows = [
           </p>
           <div class="gallery">
             <figure>
-              <Image
-                class="gallery__img"
-                src={arnieAssistant}
-                alt="Arnie's assistant configuration screen, with type, identity, personality, instructions and capabilities as five steps"
-                widths={[480, 760, 1120, 1600, 2240]}
-                sizes="(max-width: 760px) calc(100vw - 3rem), min(1120px, calc(100vw - 3rem))"
-                loading="lazy"
-              />
+              <a class="shot" href={assistantFull.src}>
+                <Image
+                  class="gallery__img"
+                  src={arnieAssistant}
+                  alt="Arnie's assistant configuration screen, with type, identity, personality, instructions and capabilities as five steps"
+                  widths={[480, 760, 1120, 1600, 2240]}
+                  sizes="(max-width: 760px) calc(100vw - 3rem), min(1120px, calc(100vw - 3rem))"
+                  loading="lazy"
+                />
+                <span class="sr-only">View the assistant configuration screen at full size</span>
+              </a>
               <figcaption>
                 Configuring an assistant. Five steps — type, identity, personality, instructions,
                 capabilities — so a shop owner can set one up without knowing what a system prompt
-                is.
+                is.<span class="shot__cue">Image opens full size</span>
               </figcaption>
             </figure>
             <div class="gallery__pair">
               <figure>
-                <Image
-                  class="gallery__img"
-                  src={arnieDashboard}
-                  alt="Arnie's dashboard, showing setup progress and call metrics"
-                  widths={[360, 560, 720, 1120]}
-                  sizes="(max-width: 760px) calc(100vw - 3rem), 560px"
-                  loading="lazy"
-                />
+                <a class="shot" href={dashboardFull.src}>
+                  <Image
+                    class="gallery__img"
+                    src={arnieDashboard}
+                    alt="Arnie's dashboard, showing setup progress and call metrics"
+                    widths={[360, 560, 720, 1120]}
+                    sizes="(max-width: 760px) calc(100vw - 3rem), 560px"
+                    loading="lazy"
+                  />
+                  <span class="sr-only">View the dashboard at full size</span>
+                </a>
                 <figcaption>
                   The dashboard answers "is it working?" before "how much?" — health first, then
                   the numbers, then the conversations themselves.
+                  <span class="shot__cue">Image opens full size</span>
                 </figcaption>
               </figure>
               <figure>
-                <Image
-                  class="gallery__img"
-                  src={arnieAnalytics}
-                  alt="Arnie's analytics screen, showing conversation volume and channel distribution"
-                  widths={[360, 560, 720, 1120]}
-                  sizes="(max-width: 760px) calc(100vw - 3rem), 560px"
-                  loading="lazy"
-                />
+                <a class="shot" href={analyticsFull.src}>
+                  <Image
+                    class="gallery__img"
+                    src={arnieAnalytics}
+                    alt="Arnie's analytics screen, showing conversation volume and channel distribution"
+                    widths={[360, 560, 720, 1120]}
+                    sizes="(max-width: 760px) calc(100vw - 3rem), 560px"
+                    loading="lazy"
+                  />
+                  <span class="sr-only">View the analytics screen at full size</span>
+                </a>
                 <figcaption>
                   Analytics answers one question per card — what customers ask, which channel they
                   arrive on, how fast the assistant replies.
+                  <span class="shot__cue">Image opens full size</span>
                 </figcaption>
               </figure>
             </div>
@@ -475,10 +496,90 @@ const rows = [
       <span>Astro · self-hosted Geist · updated {updated}</span>
     </div>
   </footer>
+
+  {/* One dialog, reused by all three screenshots. Native <dialog> brings the
+      focus trap, Escape-to-close, the backdrop and inerting the page behind it,
+      so the script below only has to move a src around. Empty and inert until
+      a screenshot is opened; the links work without it. */}
+  <dialog class="viewer" aria-label="Screenshot viewer">
+    <button class="viewer__close" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+    <div class="viewer__pane">
+      <img class="viewer__img" alt="" />
+    </div>
+    <p class="viewer__hint" aria-hidden="true"></p>
+  </dialog>
 </Layout>
 
 <script>
   import { track } from '@vercel/analytics';
+
+  /* Screenshot viewer. The markup already links each shot to its full-size
+     file, so this only upgrades that link into an in-page dialog: without the
+     script the link still works, it just leaves the page.
+
+     Native <dialog> handles focus, Escape and the backdrop, so what is left is
+     swapping the image and one zoom toggle. Fit-to-screen on open — the whole
+     interface, larger than the page shows it — and one click switches to full
+     resolution, where the pane scrolls to pan around. */
+  const viewer = document.querySelector<HTMLDialogElement>('dialog.viewer');
+  const viewerImg = viewer?.querySelector<HTMLImageElement>('.viewer__img');
+  const viewerPane = viewer?.querySelector<HTMLElement>('.viewer__pane');
+  const viewerHint = viewer?.querySelector<HTMLElement>('.viewer__hint');
+
+  if (viewer && viewerImg && viewerPane && viewerHint) {
+    const setZoom = (on: boolean) => {
+      viewerImg.classList.toggle('is-zoomed', on);
+      viewerHint.textContent = on ? 'Drag to explore · click to fit' : 'Click the image for full resolution';
+      if (on) {
+        viewerPane.scrollLeft = (viewerPane.scrollWidth - viewerPane.clientWidth) / 2;
+        viewerPane.scrollTop = 0;
+      }
+    };
+
+    document.querySelectorAll<HTMLAnchorElement>('a.shot').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        viewerImg.src = link.href;
+        viewerImg.alt = link.querySelector('img')?.alt ?? '';
+        /* On a narrow screen the fitted view is no bigger than the page
+           already shows, so there is nothing to gain from it: open at full
+           resolution and let the reader pan. Wide screens fit first, where
+           seeing the whole interface at once is worth something. */
+        setZoom(window.innerWidth < 900);
+        viewer.showModal();
+        setZoom(window.innerWidth < 900);
+      });
+    });
+
+    viewerImg.addEventListener('click', () => setZoom(!viewerImg.classList.contains('is-zoomed')));
+    viewer.querySelector('.viewer__close')?.addEventListener('click', () => viewer.close());
+    /* Clicks that land on the dialog itself are backdrop clicks: its children
+       cover everything else. */
+    viewer.addEventListener('click', (event) => {
+      if (event.target === viewer) viewer.close();
+    });
+    /* <dialog> is supposed to close itself on Escape. Measured in a real
+       browser it does not always: the keydown arrives, the cancel event never
+       fires, and the dialog stays open. Closing it here costs three lines and
+       removes the dependency on that behaviour. */
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && viewer.open) {
+        event.preventDefault();
+        viewer.close();
+      }
+    });
+
+    /* Release the decoded image so a closed viewer costs nothing. */
+    viewer.addEventListener('close', () => {
+      viewerImg.removeAttribute('src');
+    });
+  }
 
   /* Two intent signals. Page views say the link was opened; these say the
      reader went looking for a way to act on it. Delegated from the document

@@ -8,12 +8,20 @@ cost something, and the cost is stated.
 
 ## No client framework
 
-The page's own JavaScript is about 1 KB: a scroll reveal built on
-`IntersectionObserver`, which unobserves each element once it fires, and two
-click handlers.
+The page's own JavaScript is about 2 KB: a scroll reveal built on
+`IntersectionObserver` that unobserves each element once it fires, two click
+handlers, and the screenshot viewer.
+
+The viewer is the one place the page needed real interaction. On a phone the
+screenshots render at 14% of their source width — sharp, but unreadable — and
+linking straight to the image file sent the reader off the page with only the
+back gesture to return. A native `<dialog>` brings the focus trap, the backdrop
+and inerting the page behind it, so keeping the reader in place cost 1 KB rather
+than a library.
 
 *Cost:* there is no component model. Any future interactivity gets written by
-hand.
+hand — and `<dialog>` did not close on Escape in every browser tested, so that
+is handled explicitly rather than assumed.
 
 ## Self-hosted type, with a metric-matched fallback
 
@@ -65,8 +73,8 @@ dropped, link URLs printed after their text.
 
 | | |
 | --- | --- |
-| First render | 69.6 KB — HTML 25.0, CSS 11.7, font 28.6, JS 4.4 |
-| JavaScript | 4.4 KB across three modules, 3.2 of it analytics |
+| First render | 71.6 KB — HTML 25.3, CSS 13.0, font 28.6, JS 5.2 |
+| JavaScript | 5.2 KB across three modules, 3.1 of it analytics |
 | Type sizes | 6 |
 | Spacing steps | 10 |
 | Third-party requests | 0 |

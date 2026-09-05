@@ -489,6 +489,107 @@ img {
   font-size: var(--fs-label);
   color: var(--text-faint);
 }
+/* ============================================================
+   Screenshot viewer. A dialog rather than a new page, because
+   sending a reader off the page mid-article to look at a
+   picture costs more than the script does.
+   ============================================================ */
+
+.viewer {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+.viewer::backdrop {
+  background: rgb(9 8 5 / 0.94);
+}
+.viewer__pane {
+  width: 100%;
+  height: 100%;
+  padding: var(--sp-6);
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 700px) {
+  .viewer__pane {
+    padding: var(--sp-3);
+  }
+}
+.viewer__img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+/* Full resolution: the image stops fitting and the pane pans instead. */
+.viewer__img.is-zoomed {
+  max-width: none;
+  max-height: none;
+  width: 2400px;
+  cursor: zoom-out;
+}
+.viewer__close {
+  position: fixed;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--text);
+  background: color-mix(in oklab, var(--bg-raised) 88%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.viewer__close:hover {
+  border-color: var(--rule);
+}
+.viewer__hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--sp-4);
+  text-align: center;
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+/* Each screenshot links to a full-size copy. The link is the image itself, so
+   the only desktop affordance is the cursor; the caption carries the cue for
+   touch, where there is no hover to reveal anything. */
+.shot {
+  display: block;
+  border-radius: 8px;
+}
+.shot .gallery__img {
+  transition: border-color var(--dur-base) var(--ease);
+}
+.shot:hover .gallery__img {
+  border-color: var(--rule);
+}
+.shot__cue {
+  color: var(--text-faint);
+}
+.shot__cue::before {
+  /* The separator carries its own spaces: Astro collapses the whitespace
+     between the caption text and this span, so the markup cannot supply them. */
+  content: ' · ';
+}
+
 .gallery__img {
   width: 100%;
   height: auto;
