@@ -532,13 +532,40 @@ const rows = [
   const viewerHint = viewer?.querySelector<HTMLElement>('.viewer__hint');
 
   if (viewer && viewerImg && viewerPane && viewerHint) {
-    const setZoom = (on: boolean) => {
+    /* "Click" is wrong on a phone and "tap" is wrong on a desktop. */
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    const verb = touch ? 'tap' : 'click';
+    const Verb = touch ? 'Tap' : 'Click';
+
+    /* Zooming keeps the spot under the pointer in place, the way every image
+       viewer does: without it, tapping the corner of a screenshot jumps you to
+       the middle of it and you have to find your way back. `origin` carries
+       where the pointer was and which fraction of the fitted image sat there;
+       after the swap, the pane scrolls so that fraction lands back under it. */
+    type ZoomOrigin = { x: number; y: number; fx: number; fy: number };
+
+    const setZoom = (on: boolean, origin?: ZoomOrigin) => {
       viewerImg.classList.toggle('is-zoomed', on);
-      viewerHint.textContent = on ? 'Drag to explore · click to fit' : 'Click the image for full resolution';
-      if (on) {
-        viewerPane.scrollLeft = (viewerPane.scrollWidth - viewerPane.clientWidth) / 2;
-        viewerPane.scrollTop = 0;
-      }
+      viewerHint.textContent = on
+        ? `Drag to explore · ${verb} to fit`
+        : `${Verb} the image for full resolution`;
+      if (!on) return;
+
+      const pane = viewerPane.getBoundingClientRect();
+      const img = viewerImg.getBoundingClientRect();
+      /* Where the image starts inside the pane's scrollable content. Reading it
+         back rather than assuming it survives the padding and the centring. */
+      const imgLeft = img.left - pane.left + viewerPane.scrollLeft;
+      const imgTop = img.top - pane.top + viewerPane.scrollTop;
+
+      const fx = origin ? origin.fx : 0.5;
+      const fy = origin ? origin.fy : 0;
+      const anchorX = origin ? origin.x - pane.left : viewerPane.clientWidth / 2;
+      const anchorY = origin ? origin.y - pane.top : 0;
+
+      /* The browser clamps these to the scrollable range on its own. */
+      viewerPane.scrollLeft = imgLeft + fx * img.width - anchorX;
+      viewerPane.scrollTop = imgTop + fy * img.height - anchorY;
     };
 
     document.querySelectorAll<HTMLAnchorElement>('a.shot').forEach((link) => {
@@ -551,18 +578,50 @@ const rows = [
            already shows, so there is nothing to gain from it: open at full
            resolution and let the reader pan. Wide screens fit first, where
            seeing the whole interface at once is worth something. */
-        setZoom(window.innerWidth < 900);
+        /* Always open on the whole screenshot. Seeing what you are looking at
+           comes before seeing it closely, and the fitted view here is already
+           wider than the one in the page — the dialog has less padding around
+           it and nothing else competing for the screen. */
+        setZoom(false);
         viewer.showModal();
-        setZoom(window.innerWidth < 900);
+        setZoom(false);
+        /* Zoomed, the image covers the whole screen: there is no backdrop left
+           to tap and a phone has no Escape, so the close button would be the
+           only way out. Back is the instinctive gesture on a phone, and a
+           <dialog> does not touch history — so pressing it would leave the
+           site. This entry makes Back close the viewer instead. */
+        if (!(history.state as { viewer?: boolean } | null)?.viewer) {
+          history.pushState({ viewer: true }, '');
+        }
       });
     });
 
-    viewerImg.addEventListener('click', () => setZoom(!viewerImg.classList.contains('is-zoomed')));
-    viewer.querySelector('.viewer__close')?.addEventListener('click', () => viewer.close());
+    viewerImg.addEventListener('click', (event) => {
+      if (viewerImg.classList.contains('is-zoomed')) {
+        setZoom(false);
+        return;
+      }
+      const r = viewerImg.getBoundingClientRect();
+      setZoom(true, {
+        x: event.clientX,
+        y: event.clientY,
+        fx: (event.clientX - r.left) / r.width,
+        fy: (event.clientY - r.top) / r.height,
+      });
+    });
+    /* Every dismissal goes through history, so the entry pushed on open is
+       always consumed and the reader's Back button is left exactly as it was.
+       The dialog is closed in one place only: the popstate handler. */
+    const dismiss = () => {
+      if ((history.state as { viewer?: boolean } | null)?.viewer) history.back();
+      else viewer.close();
+    };
+
+    viewer.querySelector('.viewer__close')?.addEventListener('click', dismiss);
     /* Clicks that land on the dialog itself are backdrop clicks: its children
        cover everything else. */
     viewer.addEventListener('click', (event) => {
-      if (event.target === viewer) viewer.close();
+      if (event.target === viewer) dismiss();
     });
     /* <dialog> is supposed to close itself on Escape. Measured in a real
        browser it does not always: the keydown arrives, the cancel event never
@@ -571,13 +630,14 @@ const rows = [
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && viewer.open) {
         event.preventDefault();
-        viewer.close();
+        dismiss();
       }
     });
 
     /* Release the decoded image so a closed viewer costs nothing. */
-    viewer.addEventListener('close', () => {
-      viewerImg.removeAttribute('src');
+    viewer.addEventListener('close', () => viewerImg.removeAttribute('src'));
+    window.addEventListener('popstate', () => {
+      if (viewer.open) viewer.close();
     });
   }
 
