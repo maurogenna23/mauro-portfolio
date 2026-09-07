@@ -69,6 +69,22 @@ dropped, link URLs printed after their text.
 
 *Cost:* a stylesheet nobody looks at until the moment it matters.
 
+## The résumé is a page, not a file
+
+`Mauro_Genna_CV.pdf` is a static file, and a file request runs no script — so
+the click that matters most was the only one that could not be counted. A custom
+event would have covered it, but custom events are a paid tier of Vercel
+Analytics. `/cv` covers it for nothing: a real route that reports itself as a
+page view and then hands over the PDF.
+
+The handover is a programmatic click on a `download` anchor rather than a
+redirect. A redirect unloads the document, and an unloading document may never
+send the page view the route exists to record.
+
+*Cost:* a hop between the click and the file, and the PDF now downloads instead
+of opening in the browser's viewer. Without JavaScript the hop is a page with a
+link on it rather than a dead end.
+
 ## Numbers
 
 | | |
@@ -90,4 +106,4 @@ npm install
 npm run dev
 ```
 
-Astro 5, static output, deployed on Vercel.
+Astro 7, static output, deployed on Vercel.

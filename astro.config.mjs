@@ -6,7 +6,14 @@ import sitemap from '@astrojs/sitemap';
 // URLs. Update this if a custom domain replaces the Vercel one.
 export default defineConfig({
   site: 'https://maurogenna.dev',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // `/cv` exists to be measured, not to be found. It carries `noindex`,
+      // so listing it here would ask a crawler to fetch a page whose only
+      // instruction is to go away. The PDF it hands over stays crawlable.
+      filter: (page) => !/\/cv\/?$/.test(page),
+    }),
+  ],
   build: {
     inlineStylesheets: 'auto',
   },

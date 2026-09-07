@@ -180,7 +180,7 @@ const rows = [
   { k: 'Live product', v: 'www.arniechat.com', href: 'https://www.arniechat.com' },
   { k: 'Code', v: 'github.com/maurogenna23', href: 'https://github.com/maurogenna23' },
   { k: 'Profile', v: 'linkedin.com/in/maurogenna', href: 'https://www.linkedin.com/in/maurogenna' },
-  { k: 'Résumé', v: 'Mauro_Genna_CV.pdf', href: '/Mauro_Genna_CV.pdf' },
+  { k: 'Résumé', v: 'Mauro_Genna_CV.pdf', href: '/cv' },
 ];
 ---
 
@@ -648,7 +648,7 @@ const rows = [
   document.addEventListener('click', (event) => {
     const link = (event.target as HTMLElement).closest('a');
     const href = link?.getAttribute('href') ?? '';
-    if (href.endsWith('.pdf')) track('cv_download');
+    if (href === '/cv') track('cv_download');
     else if (href.startsWith('mailto:')) track('email_click');
   });
 

@@ -3,8 +3,12 @@
   "configurations": [
     {
       "name": "astro-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "//": "Astro 7 needs Node >=22.12. Load nvm and honour .nvmrc first, so the server does not start on whatever node the login shell happens to expose. Falls through to plain `npm run dev` where nvm is not installed.",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "[ -s \"$HOME/.nvm/nvm.sh\" ] && . \"$HOME/.nvm/nvm.sh\" && nvm use >/dev/null 2>&1; exec npm run dev"
+      ],
       "port": 4321
     }
   ]

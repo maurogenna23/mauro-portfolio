@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+/* The résumé lives in `public/` as a static file, and a file request runs no
+   script — so the most valuable click on the site was the only one that could
+   not be counted. This route is the smallest thing that fixes it: a real page,
+   rendered by the same Layout, that reports itself as a page view and then
+   hands over the PDF. */
+---
+
+<Layout
+  title="Résumé — Mauro Genna"
+  description="Download the résumé of Mauro Genna, Product Engineer."
+  noindex
+>
+  <main class="wrap hero">
+    <p class="hero__role">Résumé</p>
+    <h1 class="display">Mauro Genna, in two pages.</h1>
+    <p class="hero__sub">
+      The download starts on its own. If it did not, the link below hands you the file.
+    </p>
+    <div class="actions">
+      <a class="action" href="/Mauro_Genna_CV.pdf" data-cv download>Download the PDF</a>
+      <a class="action action--quiet" href="/">Back to the portfolio</a>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  /* A programmatic click on the anchor, not a redirect. A redirect unloads the
+     document, and an unloading document may never send the page view this route
+     exists to record — the measurement and the download would race each other.
+     Clicking keeps the page alive, so neither one costs the other.
+
+     With no JavaScript this does not run, and the anchor above is already the
+     visible fallback rather than a dead end. */
+  document.querySelector<HTMLAnchorElement>('[data-cv]')?.click();
+</script>
