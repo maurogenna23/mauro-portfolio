@@ -10,8 +10,8 @@ export interface Props {
 }
 
 const {
-  title = 'Mauro Genna — Product Engineer | Full Stack & AI-Powered Products',
-  description = 'Product Engineer building AI-powered products from the first customer conversation to production. Founder of Arnie. NestJS, Next.js, PostgreSQL, OpenAI.',
+  title = 'Mauro Genna — Full-Stack Engineer | AI Agents, RAG & Automations',
+  description = 'Full-Stack Engineer building AI-powered products from the first customer conversation to production. TypeScript, React, Next.js, Node.js, PostgreSQL, AI agents and RAG.',
   image = '/og-mauro-genna.png',
   noindex = false,
 } = Astro.props;
@@ -25,9 +25,9 @@ const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Mauro Genna',
-  jobTitle: 'Product Engineer',
+  jobTitle: 'Full-Stack Engineer',
   description:
-    'Product Engineer working across the full stack of AI-powered products — agentic function-calling assistants, RAG retrieval pipelines, voice automation, backend architecture and billing infrastructure. Founder of Arnie.',
+    'Full-Stack Engineer working across the full stack of AI-powered products — agentic function-calling assistants, RAG retrieval pipelines, voice automation, backend architecture and billing infrastructure. Founder of Arnie.',
   url: site.href,
   image: ogImage,
   email: 'mailto:gennamauro18@gmail.com',
@@ -36,11 +36,6 @@ const personSchema = {
     'https://www.linkedin.com/in/maurogenna',
   ],
   knowsLanguage: ['English', 'Spanish', 'Italian'],
-  worksFor: {
-    '@type': 'Organization',
-    name: 'Arnie',
-    url: 'https://www.arniechat.com',
-  },
   knowsAbout: [
     'Product Engineering',
     'UX Design',
@@ -63,7 +58,6 @@ const personSchema = {
     'OpenAI Function Calling',
     'Agentic AI Systems',
     'Voice AI Pipelines',
-    'WhatsApp Business API',
     'Multi-tenant SaaS',
     'Subscription Billing',
   ],
@@ -87,7 +81,7 @@ const personSchema = {
     <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)" />
     <meta
       name="keywords"
-      content="Mauro Genna, product engineer, full stack engineer, AI-powered products, AI engineer, RAG, function calling, agentic AI, voice AI engineer, LLM integration, founding engineer, AI SaaS, TypeScript, NestJS, Next.js, PostgreSQL, OpenAI, voice AI, Arnie"
+      content="Mauro Genna, full stack engineer, AI-powered products, AI engineer, RAG, AI agents, function calling, agentic AI, voice AI engineer, LLM integration, founding engineer, AI SaaS, TypeScript, NestJS, Next.js, PostgreSQL, OpenAI, voice AI, Arnie"
     />
 
     <!-- Open Graph -->
@@ -97,7 +91,7 @@ const personSchema = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content="Mauro Genna, Product Engineer — I build AI-powered products from the first customer conversation to production." />
+    <meta property="og:image:alt" content="Mauro Genna, Full-Stack Engineer — I build AI-powered products from the first customer conversation to production." />
     <meta property="og:locale" content="en_US" />
     <meta property="profile:first_name" content="Mauro" />
     <meta property="profile:last_name" content="Genna" />

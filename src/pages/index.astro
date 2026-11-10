@@ -114,14 +114,22 @@ const notes = [
   },
 ];
 
-const roles = [
+const openSource = [
   {
-    when: 'May 2026 — Present',
-    where: 'Remote · Argentina',
-    title: 'Founder & Full Stack Engineer',
-    org: 'Arnie',
-    desc: 'Founded and built an AI support platform for SMBs, owning everything from problem discovery and customer conversations through architecture, implementation and go-to-market.',
+    name: 'site-intel',
+    what: 'CLI that chains LLM calls to turn a company URL into a sales-ready dossier, with a guardrail against invented links and a comparison of models on cost and quality. 60+ tests, no API key.',
   },
+  {
+    name: 'llm-tool-calling-lab',
+    what: 'Assistant that books tables through LLM tool calling across 5 providers, with evidence-based model routing and a bench that scores the database instead of the answer. About 170 tests.',
+  },
+  {
+    name: 'rag-postgres-retrieval',
+    what: 'Multi-tenant retrieval engine on plain PostgreSQL (full-text, trigram, unaccent), extracted from a production assistant, with tested tenant isolation. 16 tests.',
+  },
+];
+
+const roles = [
   {
     when: 'Apr 2025 — Present',
     where: 'Spain · Remote · Concurrent contract',
@@ -177,7 +185,7 @@ const capabilities = [
 const updated = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
 const rows = [
-  { k: 'Live product', v: 'www.arniechat.com', href: 'https://www.arniechat.com' },
+  { k: 'Product', v: 'www.arniechat.com', href: 'https://www.arniechat.com' },
   { k: 'Code', v: 'github.com/maurogenna23', href: 'https://github.com/maurogenna23' },
   { k: 'Profile', v: 'linkedin.com/in/maurogenna', href: 'https://www.linkedin.com/in/maurogenna' },
   { k: 'Résumé', v: 'Mauro_Genna_CV.pdf', href: '/cv' },
@@ -192,6 +200,7 @@ const rows = [
       <a class="header__name" href="#top">Mauro Genna</a>
       <nav class="nav" aria-label="Sections">
         <a href="#work">Work</a>
+        <a href="#open-source">Open source</a>
         <a href="#approach">How I work</a>
         <a href="#experience">Experience</a>
         <a href="#capabilities">Capabilities</a>
@@ -202,7 +211,7 @@ const rows = [
 
   <main id="top">
     <section class="wrap hero">
-      <p class="hero__role">Product Engineer</p>
+      <p class="hero__role">Full-Stack Engineer</p>
       <h1 class="display">
         I build AI-powered products from the first customer conversation to production.
       </h1>
@@ -212,9 +221,9 @@ const rows = [
         implementation across frontend, backend, data and AI.
       </p>
       <p class="hero__sub">
-        I founded Arnie and run it end to end. Before that I led AI-focused client projects at
-        UseTeam in Spain, and shipped production features on an ad-tech platform at Highpoint Growth
-        Networks in the US.
+        I founded Arnie, an AI agent platform for small businesses, and built it end to end. Before
+        that I led AI-focused client projects at UseTeam in Spain, and shipped production features on
+        an ad-tech platform at Highpoint Growth Networks in the US.
       </p>
       <div class="actions">
         <a class="action" href="#work">View selected work</a>
@@ -236,7 +245,7 @@ const rows = [
               sizes="36px"
               loading="lazy"
             />
-            <p class="case__meta">Founder · Own product · 2026 → now</p>
+            <p class="case__meta">Founder · Own product · 2026</p>
           </div>
           <h3 class="case__title">Arnie — 24/7 AI customer support for small and medium businesses</h3>
           <p class="case__outcome">
@@ -244,9 +253,9 @@ const rows = [
             go-to-market around them.
           </p>
           <p class="case__intro">
-            Arnie answers customers across WhatsApp, voice, and web chat — so businesses that can't
-            staff a round-the-clock team never miss a conversation. Built for local retailers,
-            service businesses, and real-estate agencies across Latin America.
+            Arnie answers customers through chat and voice, so businesses that can't staff a
+            round-the-clock team never miss a conversation. Built for local retailers, service
+            businesses and real-estate agencies.
           </p>
           <ul class="points">
             <li>
@@ -381,6 +390,24 @@ const rows = [
       </div>
     </section>
 
+    <section class="section" id="open-source">
+      <div class="wrap">
+        <h2 class="sec">Open source</h2>
+        {
+          openSource.map((o) => (
+            <article class="case" data-reveal>
+              <h3 class="case__title">{o.name}</h3>
+              <p class="case__intro">{o.what}</p>
+              <a class="case__link" href={`https://github.com/maurogenna23/${o.name}`} target="_blank" rel="noopener">
+                github.com/maurogenna23/{o.name}
+                <span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
     <section class="section" id="approach">
       <div class="wrap">
         <h2 class="sec">How I work</h2>
@@ -415,9 +442,8 @@ const rows = [
           ))
         }
         <p class="avail">
-          Highpoint and UseTeam were independent contracts and ran concurrently. Arnie is live and
-          stays in maintenance rather than active development. I'm available for a full-time role
-          now.
+          Highpoint and UseTeam were independent contracts and ran concurrently. I'm available for a
+          full-time role now.
         </p>
         <p class="edu">
           Full Stack Web Development — Henry (2023) · Frontend Development — NextU (2022)
@@ -447,10 +473,10 @@ const rows = [
         <h2 class="sec">Contact</h2>
         <div class="contact__head">
           <div>
-            <p class="lead">Currently open to Product Engineer roles.</p>
+            <p class="lead">Open to Full-Stack and AI engineering roles.</p>
             <p class="prose contact__intro">
               If you are hiring for a role where one person owns the product decision and the code
-              that follows from it, or you want to talk about Arnie for your business, write to me.
+              that follows from it, write to me.
             </p>
             <a class="contact__email" href="mailto:gennamauro18@gmail.com">gennamauro18@gmail.com</a>
           </div>
@@ -492,7 +518,7 @@ const rows = [
 
   <footer class="footer">
     <div class="wrap footer__inner">
-      <span>© 2026 Mauro Genna · Product Engineer</span>
+      <span>© 2026 Mauro Genna · Full-Stack Engineer</span>
       <span>Astro · self-hosted Geist · updated {updated}</span>
     </div>
   </footer>
